@@ -1,9 +1,11 @@
 {
   "name": "ai_course",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx src/index.ts"
+    "dev": "tsx src/index.ts",
+    "mcp": "tsx src/mcp/server.ts"
   },
   "keywords": [],
   "author": "Filip Dziubek",
@@ -12,6 +14,7 @@
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "^0.2.29",
     "@anthropic-ai/sdk": "^0.72.1",
+    "@modelcontextprotocol/sdk": "^1.25.3",
     "@types/node": "^25.2.0",
     "@types/node-fetch": "^2.6.13",
     "dotenv": "^17.2.3",

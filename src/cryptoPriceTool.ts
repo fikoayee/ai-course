@@ -1,5 +1,5 @@
-import { ensureCsv, loadCache, appendToCsv } from "./csvCacheTool";
-import { fetchCryptoPrice } from "./fetchCryptoPriceTool";
+import { ensureCsv, loadCache, appendToCsv } from "./csvCacheTool.js";
+import { fetchCryptoPrice } from "./fetchCryptoPriceTool.js";
 
 export async function getCryptoPrice(
   crypto?: string,
@@ -24,7 +24,7 @@ export async function getCryptoPrice(
     const dayCache = cache.get(targetDate);
     if (dayCache && dayCache.has(cryptoId)) {
       const cachedPrice = dayCache.get(cryptoId)!;
-      console.log(
+      console.error(
         `[CACHE] Retrieved ${cryptoId} price for ${targetDate} from CSV`,
       );
       return `${cryptoId} ${targetDate}: $${cachedPrice.toLocaleString()} (cached)`;
@@ -35,7 +35,7 @@ export async function getCryptoPrice(
       return `No data for ${cryptoId} on ${targetDate}`;
     }
 
-    console.log(
+    console.error(
       `[API] Fetched ${cryptoId} price for ${targetDate} from CoinGecko API`,
     );
     appendToCsv(targetDate, cryptoId, price);

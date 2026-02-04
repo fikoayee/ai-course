@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import readline from "readline";
-import { getCryptoPrice } from "./cryptoPriceTool";
-import { compareCryptoPrices } from "./cryptoComparisonTool";
+import { getCryptoPrice } from "./cryptoPriceTool.js";
+import { compareCryptoPrices } from "./cryptoComparisonTool.js";
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 const anthropic = new Anthropic({ apiKey });
@@ -32,36 +32,45 @@ async function chat(): Promise<void> {
         tools: [
           {
             name: "get_crypto_price",
-            description: "Get crypto USD price",
+            description:
+              "Get the current or historical USD price of a cryptocurrency. Supports major cryptocurrencies like bitcoin, ethereum, solana, etc.",
             input_schema: {
               type: "object",
               properties: {
                 crypto: {
                   type: "string",
                   description:
-                    "Crypto name or symbol (e.g., bitcoin, ethereum, solana)",
+                    "Cryptocurrency name or symbol (e.g., bitcoin, ethereum, solana)",
                 },
-                date: { type: "string", description: "YYYY-MM-DD or 'today'" },
+                date: {
+                  type: "string",
+                  description:
+                    "Date in YYYY-MM-DD format, or 'today' for current price. Defaults to today if not specified.",
+                },
               },
-              required: [],
+              required: ["crypto"],
             },
           },
           {
             name: "compare_crypto_prices",
-            description: "Compare crypto price change between two dates",
+            description:
+              "Compare cryptocurrency prices between two dates and calculate the price change, absolute difference, and percentage change.",
             input_schema: {
               type: "object",
               properties: {
                 crypto: {
                   type: "string",
                   description:
-                    "Crypto name or symbol (e.g., bitcoin, ethereum, solana)",
+                    "Cryptocurrency name or symbol (e.g., bitcoin, ethereum, solana)",
                 },
                 startDate: {
                   type: "string",
-                  description: "Start date YYYY-MM-DD",
+                  description: "Start date in YYYY-MM-DD format",
                 },
-                endDate: { type: "string", description: "End date YYYY-MM-DD" },
+                endDate: {
+                  type: "string",
+                  description: "End date in YYYY-MM-DD format",
+                },
               },
               required: ["crypto", "startDate", "endDate"],
             },
@@ -124,41 +133,44 @@ async function chat(): Promise<void> {
           tools: [
             {
               name: "get_crypto_price",
-              description: "Get crypto USD price",
+              description:
+                "Get the current or historical USD price of a cryptocurrency. Supports major cryptocurrencies like bitcoin, ethereum, solana, etc.",
               input_schema: {
                 type: "object",
                 properties: {
                   crypto: {
                     type: "string",
                     description:
-                      "Crypto name or symbol (e.g., bitcoin, ethereum, solana)",
+                      "Cryptocurrency name or symbol (e.g., bitcoin, ethereum, solana)",
                   },
                   date: {
                     type: "string",
-                    description: "YYYY-MM-DD or 'today'",
+                    description:
+                      "Date in YYYY-MM-DD format, or 'today' for current price. Defaults to today if not specified.",
                   },
                 },
-                required: [],
+                required: ["crypto"],
               },
             },
             {
               name: "compare_crypto_prices",
-              description: "Compare crypto price change between two dates",
+              description:
+                "Compare cryptocurrency prices between two dates and calculate the price change, absolute difference, and percentage change.",
               input_schema: {
                 type: "object",
                 properties: {
                   crypto: {
                     type: "string",
                     description:
-                      "Crypto name or symbol (e.g., bitcoin, ethereum, solana)",
+                      "Cryptocurrency name or symbol (e.g., bitcoin, ethereum, solana)",
                   },
                   startDate: {
                     type: "string",
-                    description: "Start date YYYY-MM-DD",
+                    description: "Start date in YYYY-MM-DD format",
                   },
                   endDate: {
                     type: "string",
-                    description: "End date YYYY-MM-DD",
+                    description: "End date in YYYY-MM-DD format",
                   },
                 },
                 required: ["crypto", "startDate", "endDate"],

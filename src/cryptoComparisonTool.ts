@@ -1,4 +1,4 @@
-import { getCryptoPrice } from "./cryptoPriceTool";
+import { getCryptoPrice } from "./cryptoPriceTool.js";
 
 export async function compareCryptoPrices(
   crypto?: string,
