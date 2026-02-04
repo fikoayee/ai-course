@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import readline from "readline";
 import { getCryptoPrice } from "./cryptoPriceTool";
+import { compareCryptoPrices } from "./cryptoComparisonTool";
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 const anthropic = new Anthropic({ apiKey });
@@ -45,6 +46,26 @@ async function chat(): Promise<void> {
               required: [],
             },
           },
+          {
+            name: "compare_crypto_prices",
+            description: "Compare crypto price change between two dates",
+            input_schema: {
+              type: "object",
+              properties: {
+                crypto: {
+                  type: "string",
+                  description:
+                    "Crypto name or symbol (e.g., bitcoin, ethereum, solana)",
+                },
+                startDate: {
+                  type: "string",
+                  description: "Start date YYYY-MM-DD",
+                },
+                endDate: { type: "string", description: "End date YYYY-MM-DD" },
+              },
+              required: ["crypto", "startDate", "endDate"],
+            },
+          },
         ],
         tool_choice: { type: "auto" },
       });
@@ -62,6 +83,27 @@ async function chat(): Promise<void> {
             let result: string;
             try {
               result = await getCryptoPrice(args.crypto, args.date);
+            } catch (error) {
+              result = `Tool error: ${(error as Error).message}`;
+            }
+            toolResults.push({
+              type: "tool_result",
+              tool_use_id: block.id,
+              content: result,
+            });
+          } else if (block.name === "compare_crypto_prices") {
+            const args = block.input as {
+              crypto?: string;
+              startDate?: string;
+              endDate?: string;
+            };
+            let result: string;
+            try {
+              result = await compareCryptoPrices(
+                args.crypto,
+                args.startDate,
+                args.endDate,
+              );
             } catch (error) {
               result = `Tool error: ${(error as Error).message}`;
             }
@@ -97,6 +139,29 @@ async function chat(): Promise<void> {
                   },
                 },
                 required: [],
+              },
+            },
+            {
+              name: "compare_crypto_prices",
+              description: "Compare crypto price change between two dates",
+              input_schema: {
+                type: "object",
+                properties: {
+                  crypto: {
+                    type: "string",
+                    description:
+                      "Crypto name or symbol (e.g., bitcoin, ethereum, solana)",
+                  },
+                  startDate: {
+                    type: "string",
+                    description: "Start date YYYY-MM-DD",
+                  },
+                  endDate: {
+                    type: "string",
+                    description: "End date YYYY-MM-DD",
+                  },
+                },
+                required: ["crypto", "startDate", "endDate"],
               },
             },
           ],
