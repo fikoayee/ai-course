@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import readline from "readline";
-import { fetchCryptoPrice } from "./fetchCryptoPriceTool";
+import { getCryptoPrice } from "./cryptoPriceTool";
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 const anthropic = new Anthropic({ apiKey });
@@ -61,7 +61,7 @@ async function chat(): Promise<void> {
             const args = block.input as { crypto?: string; date?: string };
             let result: string;
             try {
-              result = await fetchCryptoPrice(args.crypto, args.date);
+              result = await getCryptoPrice(args.crypto, args.date);
             } catch (error) {
               result = `Tool error: ${(error as Error).message}`;
             }

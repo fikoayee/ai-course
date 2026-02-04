@@ -1,40 +1,30 @@
 import fetch from "node-fetch";
 
 export async function fetchCryptoPrice(
-  crypto?: string,
+  crypto: string,
   date?: string,
-): Promise<string> {
-  try {
-    if (!crypto) {
-      return "Error: crypto name/symbol must be specified (e.g., bitcoin, ethereum, solana)";
-    }
-    const cryptoId = crypto.toLowerCase();
-
-    if (!date || date.toLowerCase() === "today") {
-      const url = `https://api.coingecko.com/api/v3/simple/price?ids=${cryptoId}&vs_currencies=usd`;
-      const resp = await fetch(url);
-
-      const data = (await resp.json()) as Record<string, { usd: number }>;
-      const price = data[cryptoId]?.usd;
-      return price
-        ? `${cryptoId} current: $${price.toLocaleString()}`
-        : `No data for ${cryptoId}`;
-    }
-
-    // expects DD-MM-YYYY
-    const [year, month, day] = date.split("-");
-    const dateFormatted = `${day}-${month}-${year}`;
-    const url = `https://api.coingecko.com/api/v3/coins/${cryptoId}/history?date=${dateFormatted}`;
+): Promise<number | undefined> {
+  let price: number | undefined;
+  if (!date || date.toLowerCase() === "today") {
+    const url = `https://api.coingecko.com/api/v3/simple/price?ids=${crypto}&vs_currencies=usd`;
     const resp = await fetch(url);
-
+    if (!resp.ok) {
+      return undefined;
+    }
+    const data = (await resp.json()) as Record<string, { usd: number }>;
+    price = data[crypto]?.usd;
+  } else {
+    const [year, month, day] = date.split("-"); // DD-MM-YYYY
+    const dateFormatted = `${day}-${month}-${year}`;
+    const url = `https://api.coingecko.com/api/v3/coins/${crypto}/history?date=${dateFormatted}`;
+    const resp = await fetch(url);
+    if (!resp.ok) {
+      return undefined;
+    }
     const data = (await resp.json()) as {
       market_data?: { current_price?: { usd: number } };
     };
-    const price = data.market_data?.current_price?.usd;
-    return price
-      ? `${cryptoId} ${date}: $${price.toLocaleString()}`
-      : `No data for ${cryptoId} on ${date}`;
-  } catch (error) {
-    return `Error: ${(error as Error).message}`;
+    price = data.market_data?.current_price?.usd;
   }
+  return price;
 }
